@@ -31,6 +31,14 @@ public final class Attribute {
         }
     }
 
+    public String getTypeTypeString() {
+        if (type == AttributeType.BYTES || !isArray) {
+            return getTypeTypeStringInner();
+        } else {
+            return "Array<" + getTypeTypeStringInner() + ">";
+        }
+    }
+
     public String getLayaTypeString() {
         if (type == AttributeType.BYTES || !isArray) {
             return getLayaTypeStringInner();
@@ -40,7 +48,11 @@ public final class Attribute {
     }
 
     public String getAsFieldName() {
-        return "_" + Utils.toFieldName(name);
+        return Utils.toFieldName(name);
+    }
+
+    public String getTypeFieldName() {
+        return Utils.toFieldName(name);
     }
 
     private String getJavaWrapTypeStringInner() {
@@ -87,6 +99,30 @@ public final class Attribute {
             case BYTES:
             case BYTE_BUF:
                 return "flash.utils.ByteArray";
+            default:
+                return null;
+        }
+    }
+
+    private String getTypeTypeStringInner() {
+        switch (type) {
+            case BOOLEAN:
+                return "boolean";
+            case FLOAT:
+                return "number";
+            case DOUBLE:
+                return "number";
+            case OTHER:
+                return typeName;
+            case INT:
+                return "number";
+            case LONG:
+                return "number";
+            case STRING:
+                return "string";
+            case BYTES:
+            case BYTE_BUF:
+                return "egret.ByteArray";
             default:
                 return null;
         }

@@ -79,6 +79,19 @@ public final class Message {
         return sb.toString();
     }
 
+    public String getTypeConstructorString(Utils utils) {
+        StringBuilder sb = new StringBuilder();
+        for (Attribute attr : attributes) {
+            if (sb.length() != 0) {
+                sb.append(", ");
+            }
+            sb.append(attr.getName());
+            sb.append(":");
+            sb.append(utils.getTypeTypeName(attr));
+        }
+        return sb.toString();
+    }
+
     public String getLayaConstructorString(Utils utils) {
         StringBuilder sb = new StringBuilder();
         for (Attribute attr : attributes) {
@@ -108,6 +121,30 @@ public final class Message {
                 sb.append(attr.getAsFieldName());
                 sb.append(", 10)");
             } else {
+                sb.append(attr.getAsFieldName());
+            }
+            sb.append(" + \"");
+            sb.append(',');
+        }
+        sb.append(" ]\"");
+        return sb.toString();
+    }
+
+    public String getTypeToString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append('\"');
+        sb.append(name);
+        sb.append(" [");
+        for (Attribute attr : attributes) {
+            sb.append(attr.getName());
+            sb.append("=\" + ");
+            if (attr.getType() == AttributeType.BYTES) {
+                sb.append("ByteArrayUtils.toHexString(");
+                sb.append("this.");
+                sb.append(attr.getAsFieldName());
+                sb.append(", 10)");
+            } else {
+                sb.append("this.");
                 sb.append(attr.getAsFieldName());
             }
             sb.append(" + \"");

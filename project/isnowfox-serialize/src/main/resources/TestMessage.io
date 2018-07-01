@@ -3,7 +3,7 @@ asPackage = xxx.test
 //我是注释
 TestMessage{
 	//我是注释
-	boolean testBool//我是注释
+	boolean testBool
 	//我是注释
 	int testInt//我是注释
 	//我是注释

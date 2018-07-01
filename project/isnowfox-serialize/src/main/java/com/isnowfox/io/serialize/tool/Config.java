@@ -22,15 +22,18 @@ public class Config {
                 c.setPath(u.getFile());
             } else {
                 File f = new File("msgConfig");
-                c.setPath("D:\\tr\\tool\\msgConfig");
+                c.setPath("C:\\git\\majiang\\server\\project\\mj-data\\src\\main\\resources\\msg");
             }
 
-            c.setJavaSrcPath("D:\\tr\\code\\server\\project\\zgame-server\\src\\main\\java");
-            c.setAsSrcPath("D:\\tr\\code\\client\\project\\zgame-core\\src");
+            c.setJavaSrcPath("C:\\git\\game-lib\\project\\isnowfox-serialize\\src\\main\\resources\\test");
+            c.setAsSrcPath("C:\\git\\game-lib\\project\\isnowfox-serialize\\src\\main\\resources\\test\\as");
             c.setJavaRootPackage("game.net.message");
             c.setJavaHandlerRootPackage("game.net.handler");
-            c.setAsRootPackage("com.isnowfox.net.message");
-            c.setAsHandlerRootPackage("com.isnowfox.net.handler");
+            c.setAsRootPackage("");
+            c.setAsHandlerRootPackage("handler");
+            c.setTypeSrcPath("C:\\git\\game-lib\\project\\isnowfox-serialize\\src\\main\\resources\\test\\ts");
+            c.setTypeRootPackage("factory");
+            c.setTypeHandlerRootPackage("handler");
 
             return c;
         }
@@ -39,12 +42,15 @@ public class Config {
     private String path;
     private String javaSrcPath;
     private String asSrcPath;
+    private String typeSrcPath;
 
     private String javaRootPackage;
     private String asRootPackage;
+    private String typeRootPackage;
 
     private String javaHandlerRootPackage;
     private String asHandlerRootPackage;
+    private String typeHandlerRootPackage;
 
     private String javaCharacterPackage;
     private String javaCharacterClassName;
@@ -94,6 +100,10 @@ public class Config {
 
     public String getAsRootPackage() {
         return asRootPackage;
+    }
+
+    public String getTypeRootPackage() {
+        return typeRootPackage;
     }
 
     public void setAsRootPackage(String asRootPackage) {
@@ -150,6 +160,26 @@ public class Config {
 
     public boolean isOverrideHandler() {
         return isOverrideHandler;
+    }
+
+    public String getTypeSrcPath() {
+        return typeSrcPath;
+    }
+
+    public void setTypeSrcPath(String typeSrcPath) {
+        this.typeSrcPath = typeSrcPath;
+    }
+
+    public void setTypeRootPackage(String typeRootPackage) {
+        this.typeRootPackage = typeRootPackage;
+    }
+
+    public String getTypeHandlerRootPackage() {
+        return typeHandlerRootPackage;
+    }
+
+    public void setTypeHandlerRootPackage(String typeHandlerRootPackage) {
+        this.typeHandlerRootPackage = typeHandlerRootPackage;
     }
 
     public void setOverrideHandler(boolean overrideHandler) {

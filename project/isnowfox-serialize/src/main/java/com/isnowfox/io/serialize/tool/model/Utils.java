@@ -35,6 +35,14 @@ public class Utils {
         }
     }
 
+    public String getTypePack(Message m) {
+        return "message";
+    }
+
+    public String getTypeHandlerPack(Message m) {
+        return config.getAsHandlerRootPackage();
+    }
+
     public String getAsHandlerPack(Message m) {
         if (StringUtils.isEmpty(m.getPackageName())) {
             return config.getAsHandlerRootPackage();
@@ -54,9 +62,9 @@ public class Utils {
     public String getJavaType(Attribute a) {
         if (a.getType() == AttributeType.OTHER) {
             if (a.isArray()) {
-                return "java.util.ArrayList<" + getOtherType(a, true) + ">";
+                return "java.util.ArrayList<" + getOtherType(a, 0) + ">";
             } else {
-                return getOtherType(a, true);
+                return getOtherType(a, 0);
             }
         } else {
             return a.getJavaTypeString();
@@ -65,7 +73,7 @@ public class Utils {
 
     public String getAsTypeName(Attribute a) {
         if (a.getType() == AttributeType.OTHER) {
-            String name = getOtherType(a, false);
+            String name = getOtherType(a, 1);
             if (a.isArray()) {
                 return "Vector.<" + name + ">";
             } else {
@@ -76,9 +84,22 @@ public class Utils {
         }
     }
 
+    public String getTypeTypeName(Attribute a) {
+        if (a.getType() == AttributeType.OTHER) {
+            String name = getOtherType(a, 2);
+            if (a.isArray()) {
+                return "Array<" + name + ">";
+            } else {
+                return name;
+            }
+        } else {
+            return a.getTypeTypeString();
+        }
+    }
+
     public String getLayaTypeName(Attribute a) {
         if (a.getType() == AttributeType.OTHER) {
-            String name = getOtherType(a, false);
+            String name = getOtherType(a, 1);
             if (a.isArray()) {
                 return "Array";
             } else {
@@ -91,14 +112,24 @@ public class Utils {
 
     public String getAsTypeNoArray(Attribute a) {
         if (a.getType() == AttributeType.OTHER) {
-            String name = getOtherType(a, false);
+            String name = getOtherType(a, 1);
             return name;
         } else {
             return a.getAsTypeString();
         }
     }
 
-    private String getOtherType(Attribute a, boolean isJava) {
+    public String getTypeTypeNoArray(Attribute a) {
+        if (a.getType() == AttributeType.OTHER) {
+            String name = getOtherType(a, 2);
+            return name;
+        } else {
+            return a.getTypeTypeString();
+        }
+    }
+
+//    0 java  1 as 1 type
+    private String getOtherType(Attribute a, int isJava) {
         String name = a.getTypeName();
         String pack = getPack(name);
         name = getName(name);
@@ -107,10 +138,12 @@ public class Utils {
             Package p = a.getMessage().getPack();
             Message m = p.get(name);
             if (m != null) {
-                if (isJava) {
+                if (isJava==0) {
                     return getJavaPack(m) + "." + name;
-                } else {
+                } else if(isJava==1){
                     return getAsPack(m) + "." + name;
+                }else if(isJava==2){
+                    return name;
                 }
             } else {
                 //找默认包的
@@ -118,10 +151,12 @@ public class Utils {
                 if (p != null) {
                     m = p.get(name);
                     if (m != null) {
-                        if (isJava) {
+                        if (isJava==0) {
                             return getJavaPack(m) + "." + name;
-                        } else {
+                        } else if(isJava==1){
                             return getAsPack(m) + "." + name;
+                        }else if(isJava==2){
+                            return name;
                         }
                     }
                 }
@@ -132,10 +167,12 @@ public class Utils {
             if (p != null) {
                 Message m = p.get(name);
                 if (m != null) {
-                    if (isJava) {
+                    if (isJava==0) {
                         return getJavaPack(m) + "." + name;
-                    } else {
+                    } else if(isJava==1){
                         return getAsPack(m) + "." + name;
+                    }else if(isJava==2){
+                        return name;
                     }
                 }
             }

@@ -158,11 +158,16 @@ public class MessageBuilder {
 
         buildClientFile(m -> {
             executeAs(m);
+            executeType(m);
             if (m.isClientHandler()) {
                 executeAsHandler(m);
+                executeTypeHandler(m);
             }
         });
+        executeTypeMessageFactory();
         executeAsMessageFactory();
+
+        executeTypeHandlerFactory();
         executeAsHandlerFactory();
     }
 
@@ -205,6 +210,18 @@ public class MessageBuilder {
             ++type;
         }
         maxType = Math.max(MessageProtocol.LOGIN_MESSAGE_TYPE, maxType);
+    }
+
+    private void executeTypeHandlerInterface() throws Exception {
+        File file = Utils.packToPath(cfg.getJavaSrcPath(), cfg.getJavaHandlerRootPackage(), "MessageHandler", ".java");
+        file.getParentFile().mkdirs();
+        try (OutputStream out = new BufferedOutputStream(new FileOutputStream(file))) {
+            Map<String, Object> parameters = new HashMap<String, Object>();
+            parameters.put("pack", cfg.getJavaHandlerRootPackage());
+
+            HttlUtils.render(getJavaTemplate("javaHandlerInterface.httl"), parameters, out);
+            log.info("生成一个java MessageHandler文件%s", file.getName());
+        }
     }
 
     private void executeJavaHandlerInterface() throws Exception {
@@ -296,6 +313,22 @@ public class MessageBuilder {
     }
 
 
+    private void executeTypeMessageFactory() throws IOException, ParseException {
+        File file = Utils.packToPath(cfg.getTypeSrcPath(), cfg.getTypeRootPackage(), "MessageFactoryImpi", ".ts");
+        file.getParentFile().mkdirs();
+        try (OutputStream out = new BufferedOutputStream(new FileOutputStream(file))) {
+            Map<String, Object> parameters = new HashMap<String, Object>();
+            parameters.put("map", map);
+            parameters.put("maxType", maxType);
+            parameters.put("utils", utils);
+            parameters.put("package", cfg.getAsRootPackage());
+
+            HttlUtils.render(getAsTemplate("typeFactory.httl"), parameters, out);
+            log.info("生成一个ts文件%s", file.getName());
+        }
+    }
+
+
     private void executeAsHandlerFactory() throws IOException, ParseException {
         File file = Utils.packToPath(cfg.getAsSrcPath(), cfg.getAsHandlerRootPackage(), "MessageHandlerFactory", ".as");
         file.getParentFile().mkdirs();
@@ -308,6 +341,21 @@ public class MessageBuilder {
 
             HttlUtils.render(getAsTemplate("asHandlerFactory.httl"), parameters, out);
             log.info("生成一个AsHandlerFactory%s", file.getName());
+        }
+    }
+
+    private void executeTypeHandlerFactory() throws IOException, ParseException {
+        File file = Utils.packToPath(cfg.getTypeSrcPath(), "", "MessageHandlerFactory", ".ts");
+        file.getParentFile().mkdirs();
+        try (OutputStream out = new BufferedOutputStream(new FileOutputStream(file))) {
+            Map<String, Object> parameters = new HashMap<String, Object>();
+            parameters.put("map", map);
+            parameters.put("maxType", maxType);
+            parameters.put("utils", utils);
+            parameters.put("package", cfg.getAsHandlerRootPackage());
+
+            HttlUtils.render(getAsTemplate("typeHandlerFactory.httl"), parameters, out);
+            log.info("生成一个TypeHandlerFactory%s", file.getName());
         }
     }
 
@@ -329,6 +377,23 @@ public class MessageBuilder {
         }
     }
 
+    private void executeTypeHandler(Message m) throws Exception {
+        File file = Utils.packToPath(cfg.getTypeSrcPath(), utils.getTypeHandlerPack(m), m.getName(), "Handler.ts");
+        file.getParentFile().mkdirs();
+        if (!file.exists()) {
+            try (OutputStream out = new BufferedOutputStream(new FileOutputStream(file))) {
+                Map<String, Object> parameters = new HashMap<String, Object>();
+                parameters.put("m", m);
+                parameters.put("utils", utils);
+
+                HttlUtils.render(getAsTemplate("typeHandler.httl"), parameters, out);
+                log.info("生成一个ts handler文件%s", file.getName());
+            }
+        } else {
+            log.info("存在的处理器文件%s,略过", file.getName());
+        }
+    }
+
 
     private void executeAs(Message m) throws IOException, ParseException {
 
@@ -341,6 +406,20 @@ public class MessageBuilder {
 
             HttlUtils.render(getAsTemplate("as.httl"), parameters, out);
             log.info("生成一个as文件%s", file.getName());
+        }
+    }
+
+    private void executeType(Message m) throws IOException, ParseException {
+
+        File file = Utils.packToPath(cfg.getTypeSrcPath(), utils.getTypePack(m), m.getName(), ".ts");
+        file.getParentFile().mkdirs();
+        try (OutputStream out = new BufferedOutputStream(new FileOutputStream(file))) {
+            Map<String, Object> parameters = new HashMap<String, Object>();
+            parameters.put("m", m);
+            parameters.put("utils", utils);
+
+            HttlUtils.render(getAsTemplate("type.httl"), parameters, out);
+            log.info("生成一个ts文件%s", file.getName());
         }
     }
 
